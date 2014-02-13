@@ -1,0 +1,13 @@
+out/
+dist/
+.idea/
+build/
+bin/
+.settings/
+.DS_Store
+.classpath
+.project
+*.iml
+dump.rdb
+node_modules/
+npm-debug.log

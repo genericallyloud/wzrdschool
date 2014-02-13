@@ -1,0 +1,20 @@
+{
+  "name": "wzrdschool",
+  "version": "0.1.0",
+  "authors": [
+    "Russell Leggett <russ@taggartsoftware.com>"
+  ],
+  "description": "wizard school game",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pixi.js": "~1.4.3"
+  }
+}

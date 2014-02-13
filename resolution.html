@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style type="text/css"> body{ margin: 0px; padding: 0px; } </style>
+</head>
+<body>
+<script type="text/javascript">
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var dips = window.devicePixelRatio;
+
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    canvas.width = dips * width;
+    canvas.height = dips * height;
+    document.body.appendChild(canvas);
+ 
+    ctx.beginPath();
+    ctx.arc(width / 2, height / 2, 200, 0, 2 * Math.PI);
+    ctx.stroke();
+    alert(dips);
+</script>
+</body>
+</html>
