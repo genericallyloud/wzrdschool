@@ -46,6 +46,10 @@ var WZRD = (function(WZRD){
         
         window.requestAnimFrame(this._gameTickCallback);
     }
+
+    GameEngine.prototype.moveLeft = function(){
+
+    }
     
     WZRD.GameEngine = GameEngine;
 }(WZRD || {}));

@@ -3,10 +3,9 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>WebGL - 2D Rectangles</title>
+        <title>WzrdSchool</title>
         <link type="text/css" href="assets/webgl-tutorials.css" rel="stylesheet" />
-        <script type="text/javascript" src="lib/webgl-utils-rocks.js"></script>
-        <script type="text/javascript" src="dist/wzrdschool.js"></script>
+        <script type="text/javascript" src="dest/all.js"></script>
         
         
         <!-- vertex shader -->
@@ -45,8 +44,8 @@
                gl_FragColor = v_Color;
             }
         </script>
+        <script type="text/javascript">
+            window.onload = WZRD.main;
+        </script>
     </head>
-    <body>
-    <canvas id="canvas" width="960" height="640"></canvas>
-    </body>
 </html>

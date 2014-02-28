@@ -27,7 +27,6 @@ var WZRD = (function(WZRD){
     InputManager.prototype.keydown = function keydown(e) {
         if (e.keyCode == '37') {
             // left arrow
-            gameState.xDiff = -10;
         }
         else if (e.keyCode == '39') {
             // right arrow
