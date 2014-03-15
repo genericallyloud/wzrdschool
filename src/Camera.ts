@@ -24,6 +24,9 @@ module WZRD {
             this.trackingWindowBounds = new Bounds(
                     new Vector(right-Camera.TRACKING_WIDTH,bottom),
                     new Vector(right, bottom+Camera.TRACKING_HEIGHT));
+        
+            //TODO - make this correct
+            this.cameraTranslation = new Vector(16,16);
             this.cameraStyle = CameraStyle.GROUND_LOCK;
             this.leadingEdge = Edge.RIGHT;
         }
@@ -88,6 +91,7 @@ module WZRD {
          */
         getColumnStartWidth(){
             var colStart = ((this.cameraTranslation.x/32)|0)-1;
+            if(colStart < 0) colStart = 0;
             var colWidth = ((this.canvasWidth/32)|0)+2;
             return {start:colStart,width:colWidth};
         }

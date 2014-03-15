@@ -8,6 +8,9 @@
 ///<reference path="TileEngine.ts"/>
 ///<reference path="webgl-utils.ts"/>
 module WZRD {
+    /**
+     * The game engine initializes all of the subsystems and manages the main render loop
+     */
     export class GameEngine {
         private camera:Camera;
         private clock:Clock;
@@ -33,7 +36,7 @@ module WZRD {
                 //initialized and ready for use in subsequent calls. This is basically
                 //a lost from that doesn't update or draw, but shouldn't really be noticeable
                 this.clock.initTime(timestamp);
-                requestAnimFrame(this.gameTickCallback);
+                window.requestAnimationFrame(this.gameTickCallback);
             };
 
             this.paused = false;
@@ -54,12 +57,12 @@ module WZRD {
 
 
         start(){
-            this.nextFrame = requestAnimFrame(this.firstTick);
+            this.nextFrame = window.requestAnimationFrame(this.firstTick);
             this.paused = false;
         }
 
         pause(){
-            cancelRequestAnimFrame(this.nextFrame);
+            window.cancelAnimationFrame(this.nextFrame);
             this.paused = true;
         }
 
@@ -70,7 +73,7 @@ module WZRD {
             this.camera.update(elapsedTime);
             this.renderManager.draw();
 
-            requestAnimFrame(this.gameTickCallback);
+            window.requestAnimationFrame(this.gameTickCallback);
         }
 
         moveLeft(){

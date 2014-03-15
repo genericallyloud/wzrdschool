@@ -11,5 +11,15 @@ module WZRD {
         update(elapsedTime:number){
             this.player.update(elapsedTime);
         }
+    
+        getSpriteVertices(){
+            var spriteCount = 1;
+            var vertexCount = spriteCount * 6;
+            var buffer = new Float32Array(vertexCount * 5),//each vertex has 5 floats
+                bufferIndex = 0;
+            this.player.writeToBuffer(buffer, bufferIndex);
+            //in the future, we'll want to go through the list of all 
+            return {buffer:buffer, vertexCount:vertexCount};
+        }
     }
 }

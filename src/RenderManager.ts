@@ -3,6 +3,10 @@
 ///<reference path="TileEngine.ts"/>
 ///<reference path="webgl.d.ts"/>
 module WZRD {
+    /**
+     * RenderManager is meant to isolate the gl operations, although there are lower things
+     * which just might need stuff...
+     */
     export class RenderManager {
         private canvas:HTMLCanvasElement;
         private gl:WebGLRenderingContext;
@@ -42,7 +46,14 @@ module WZRD {
         }
 
         draw(){
+            var gl = this.gl;
+            // Specify the color for clearing <canvas>
+            gl.clearColor(0.9, 0.9, 1.0, 1.0);
+
+            // Clear <canvas>
+            gl.clear(gl.COLOR_BUFFER_BIT);
             this.drawTileLayer();
+            this.drawSprites();
         }
 
         private updateSize(canvas){
@@ -57,7 +68,7 @@ module WZRD {
 
         private drawTileLayer(){
             var colStartWidth = this.camera.getColumnStartWidth();
-            var columnRange = this.tileEngine.getColumnRangeBuffer(colStartWidth[0],colStartWidth[1]);
+            var columnRange = this.tileEngine.getColumnRangeBuffer(colStartWidth.start,colStartWidth.width);
             var verticesColors:Float32Array = columnRange.buffer;
             var n:number = columnRange.vertexCount;
 
@@ -71,11 +82,24 @@ module WZRD {
             // Set vertex information
             this.initVertexBuffers(gl, this.program, verticesColors, n);
 
-            // Specify the color for clearing <canvas>
-            gl.clearColor(0.9, 0.9, 1.0, 1.0);
+            // Draw the rectangle
+            gl.drawArrays(gl.TRIANGLES, 0, n);
+        }
 
-            // Clear <canvas>
-            gl.clear(gl.COLOR_BUFFER_BIT);
+        private drawSprites(){
+            var vertices = this.stateManager.getSpriteVertices();
+            var verticesColors:Float32Array = vertices.buffer;
+            var n:number = vertices.vertexCount;
+
+            if (n < 0) {
+                console.log('Failed to set the vertex information');
+                return;
+            }
+
+            var gl = this.gl;
+
+            // Set vertex information
+            this.initVertexBuffers(gl, this.program, verticesColors, n);
 
             // Draw the rectangle
             gl.drawArrays(gl.TRIANGLES, 0, n);

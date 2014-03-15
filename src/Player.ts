@@ -8,17 +8,43 @@ module WZRD {
         public bounds:Bounds;
         private width:number;
         private height:number;
+        private color:number[];
 
         constructor(startX,startY){
             this.velocity = new Vector(0,0);
-            this.width = 1;
-            this.height = 1.8;
+            this.width = 1 * 32;
+            this.height = 1.8 * 32;
+            this.color = [0,0,0];
 
             this.initPosition(startX,startY);
         }
 
-        writeToBuffer(buffer){
+        writeToBuffer(buffer:Float32Array, bufferIndex:number):number{
+            var bottom = this.bounds.getBottom(),
+            top = this.bounds.getTop(),
+            left = this.bounds.getLeft(),
+            right = this.bounds.getRight(),
+            color = this.color; //TODO change to sprite texture
 
+            // FIRST TRIANGLE
+
+            //bottom left
+            bufferIndex = TileEngine.createTileVertex(left,bottom,color,buffer,bufferIndex);
+            //bottom right
+            bufferIndex = TileEngine.createTileVertex(right,bottom,color,buffer,bufferIndex);
+            //top left
+            bufferIndex = TileEngine.createTileVertex(left,top,color,buffer,bufferIndex);
+
+            //SECOND TRIANGLE
+
+            //top left
+            bufferIndex = TileEngine.createTileVertex(left,top,color,buffer,bufferIndex);
+            //bottom right
+            bufferIndex = TileEngine.createTileVertex(right,bottom,color,buffer,bufferIndex);
+            //top right
+            bufferIndex = TileEngine.createTileVertex(right,top,color,buffer,bufferIndex);
+
+            return bufferIndex;
         }
 
         update(elapsedTime:number){

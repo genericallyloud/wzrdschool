@@ -1,4 +1,12 @@
+///<reference path="levels/test.ts"/>
 module WZRD {
+    
+    export interface LevelData {
+        buffer:Float32Array;
+        colOffsets:number[];
+        bufferIndex:number;
+    }
+    
     export class TileEngine {
         private tileData:Float32Array;
         private colOffsets:number[];
@@ -13,6 +21,11 @@ module WZRD {
          */
         constructor(camera:Camera){
             this.camera = camera;
+            var levelData = TileEngine.createLevelData(Levels.test.tileConfig);
+            this.tileData = levelData.buffer;
+            this.colOffsets = levelData.colOffsets;
+            this.dataLength = levelData.bufferIndex;
+            this.colMax = this.colOffsets.length-31;
         }
 
         /**
@@ -52,18 +65,19 @@ module WZRD {
 
         /**
          * Takes a 2D array like the one created by parseLevel and produces a Float32Array
-         * from it containing the pixel based offset vertices and texture coords. These
-         * will be used to
+         * from it containing the pixel based offset vertices and colors (will be texture coords). These
+         * will be sent to the shader to draw the tiles
          */
-        static createLevelData(tileConfig){
+        static createLevelData(tileConfig):LevelData{
             var colNum,col,xCoord,tileNum,tileOffset,tileVal,color,
-            width = tileConfig.length,
-            height = tileConfig[0].length,
-            //colCount x rowCount x verticesPerTile x floatsPerVertex
-            //this array is over-allocated for the maximum possible amount. room for optimization
-            buffer = new Float32Array(width * height * 6 * 5),
-            bufferIndex = 0,
-            colOffsets = [];
+                width = tileConfig.length,
+                height = tileConfig[0].length,
+                //colCount x rowCount x verticesPerTile x floatsPerVertex
+                //this array is over-allocated for the maximum possible amount. room for optimization
+                buffer = new Float32Array(width * height * 6 * 5),
+                bufferIndex = 0,
+                colOffsets = [];
+            
             for(colNum=0;colNum<width;colNum++){
                 col = tileConfig[colNum];
                 xCoord = colNum * 32;
@@ -84,7 +98,7 @@ module WZRD {
                 }
             }
 
-            return [buffer,colOffsets,bufferIndex];
+            return {buffer:buffer,colOffsets:colOffsets,bufferIndex:bufferIndex};
         }
 
         static createTileVertices(x,y,width,height,color,buffer,bufferIndex){
