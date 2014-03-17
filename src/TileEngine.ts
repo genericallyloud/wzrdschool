@@ -26,6 +26,7 @@ module WZRD {
             this.colOffsets = levelData.colOffsets;
             this.dataLength = levelData.bufferIndex;
             this.colMax = this.colOffsets.length-31;
+            this.camera.onLevelChange(this.colMax);
         }
 
         /**
@@ -128,7 +129,7 @@ module WZRD {
             return bufferIndex;
         }
 
-        private static createTileVertex(x,y,color,buffer,bufferIndex){
+        static createTileVertex(x,y,color,buffer,bufferIndex){
             buffer.set([x,y,color[0],color[1],color[2]],bufferIndex);
             return bufferIndex+5;
         }

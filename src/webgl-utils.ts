@@ -3,15 +3,15 @@
 // These funcitions are meant solely to help unclutter the tutorials.
 // They are not meant as production type functions.
 
-///<reference path="webgl.d.ts" />
 module WZRD {
+    var useLogs = true;
 
     /**
      * Wrapped logging function.
      * @param {string} msg The message to log.
      */
     function log(msg:string) {
-        if (window.console && window.console.log) {
+        if (useLogs && window.console && window.console.log) {
             window.console.log(msg);
         }
     }
@@ -22,7 +22,7 @@ module WZRD {
      * @param {string} msg The message to log.
      */
     function error(msg:string) {
-        if (window.console) {
+        if (useLogs && window.console) {
             if (window.console.error) {
                 window.console.error(msg);
             }
@@ -36,8 +36,7 @@ module WZRD {
      * Turn off all logging.
      */
     function loggingOff() {
-        log = function() {};
-        error = function() {};
+        useLogs = false;
     }
 
     /**

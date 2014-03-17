@@ -36,7 +36,7 @@ module WZRD {
                 //initialized and ready for use in subsequent calls. This is basically
                 //a lost from that doesn't update or draw, but shouldn't really be noticeable
                 this.clock.initTime(timestamp);
-                window.requestAnimationFrame(this.gameTickCallback);
+                this.nextFrame = window.requestAnimationFrame(this.gameTickCallback);
             };
 
             this.paused = false;
@@ -45,16 +45,14 @@ module WZRD {
 
             this.clock = new Clock();
             this.inputManager = new InputManager(this);
-
-            this.player = new Player(32,32);
+            this.player = new Player(128,160);
             this.camera = new Camera(this.player);
             this.tileEngine = new TileEngine(this.camera);
             this.stateManager = new StateManager(this.tileEngine,this.player);
             this.collisionManager = new CollisionManager(this.tileEngine, this.stateManager);
             this.renderManager = new RenderManager(this.camera,this.tileEngine, this.stateManager);
+            this.inputManager.start();
         }
-
-
 
         start(){
             this.nextFrame = window.requestAnimationFrame(this.firstTick);
@@ -73,11 +71,19 @@ module WZRD {
             this.camera.update(elapsedTime);
             this.renderManager.draw();
 
-            window.requestAnimationFrame(this.gameTickCallback);
+            this.nextFrame = window.requestAnimationFrame(this.gameTickCallback);
         }
 
-        moveLeft(){
-
+        fireInputEvent(inputEvent:InputEventType){
+            if(inputEvent == InputEventType.PAUSE){
+                if(this.paused){
+                    this.start();
+                }else{
+                    this.pause();
+                }
+            }else{
+                this.player.onInput(inputEvent);
+            }
         }
     }
 

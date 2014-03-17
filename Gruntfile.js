@@ -36,44 +36,31 @@ module.exports = function(grunt) {
             }
           }
         },
-        traceur: {
-            options: {
-                // traceur options here
-                blockBinding: true
-            },
-            custom: {
-                files:{
-                  'build/all.js': ['js/**/*.js']
-                }
-            }
-        },
         typescript: {
             base: {
                 src: ['src/**/*.ts'],
-                dest: 'dest/all.js',
+                dest: 'dist/<%= pkg.name %>.js',
                 options: {
                     module: 'amd' //or commonjs
                 }
             }
         },
-    watch: {
-      files: ['src/**/*.ts'],
-      tasks: ['typescript']
-    },
-    devserver: {options:{port:8889}, server: {}}
-  });
+        watch: {
+          files: ['src/**/*.ts'],
+          tasks: ['typescript']
+        },
+        devserver: {options:{port:8889}, server: {}}
+    });
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-devserver');
-  grunt.loadNpmTasks('grunt-traceur');
-  grunt.loadNpmTasks('grunt-typescript');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-devserver');
+    grunt.loadNpmTasks('grunt-typescript');
 
-  grunt.registerTask('test', ['jshint', 'qunit']);
-
-  grunt.registerTask('default', ['jshint', 'concat']);
+    grunt.registerTask('test', ['jshint', 'qunit']);
+    grunt.registerTask('default', ['typescript']);
 
 };

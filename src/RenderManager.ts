@@ -1,7 +1,6 @@
 ///<reference path="Camera.ts"/>
 ///<reference path="StateManager.ts"/>
 ///<reference path="TileEngine.ts"/>
-///<reference path="webgl.d.ts"/>
 module WZRD {
     /**
      * RenderManager is meant to isolate the gl operations, although there are lower things
@@ -52,6 +51,7 @@ module WZRD {
 
             // Clear <canvas>
             gl.clear(gl.COLOR_BUFFER_BIT);
+            this.updatePosition();
             this.drawTileLayer();
             this.drawSprites();
         }
@@ -109,8 +109,8 @@ module WZRD {
         private updatePosition(){
             // set the resolution
             var translationAmount = this.gl.getUniformLocation(this.program, "u_Translation");
-            var startWidth = this.camera.getColumnStartWidth();
-            this.gl.uniform2f(translationAmount, startWidth.start, startWidth.width);
+            var translation = this.camera.getCameraTranslation();
+            this.gl.uniform2f(translationAmount, translation.x, translation.y);
         }
 
         private initVertexBuffers(gl, program, verticesColors:Float32Array, n) {

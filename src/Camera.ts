@@ -37,22 +37,20 @@ module WZRD {
         }
 
         /**
-         * This will update the x field of the
+         * This will update the x field of the camera translation
          * @param elapsedTime
          */
         private updateX(elapsedTime:number){
             //check bounds of player vs tracking
             var diff = this.player.bounds.insideXOf(this.trackingWindowBounds);
-            //if within horizontal bounds, don't update camera
-            if(diff == 0) return;
 
             //if outside bounds, adjust tracking to leading edge
             this.trackingWindowBounds.moveX(diff);
             if(diff < 0){
                 this.leadingEdge = Edge.LEFT;
-            }else{
+            }else if(diff > 0){
                 this.leadingEdge = Edge.RIGHT;
-            }
+            }//otherwise stay whatever it was previously
 
             //if adjustment needed, adjust camera to center camera on leading edge of tracking window
             var targetXCenter = this.trackingWindowBounds.getEdge(this.leadingEdge);
@@ -74,7 +72,13 @@ module WZRD {
             }
 
             //now we need to handle whether or not we've hit our max range
-
+            if(targetXCenter < this.centerXAdjust){
+                //cannot go further than the left edge of the tiles
+                targetXCenter = this.centerXAdjust;
+            }else if(targetXCenter > this.maxTargetX){
+                targetXCenter = this.maxTargetX;
+            }
+            
             this.cameraTranslation.x = targetXCenter - this.centerXAdjust;
         }
 
@@ -117,7 +121,7 @@ module WZRD {
 
         static TRACKING_WIDTH = 64;
         static TRACKING_HEIGHT = 128;
-        static MAX_MOVE_RATE = (10 * 32);//10 tiles per second
+        static MAX_MOVE_RATE = (20 * 32);//10 tiles per second
     }
 
     export enum CameraStyle {
