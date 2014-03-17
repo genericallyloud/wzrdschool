@@ -19,3 +19,8 @@ Right now you actually have to use grunt to build and run. (although its pretty 
 5. open the browser to localhost:8889
 
 If you want to be able to edit the app and see the changes, run `grunt watch`, and the typescript will recompile automatically on save.
+
+
+## To play
+
+Alright, there's not much to actually play yet, but you can move your black rectangle (aka dark wizard) left or right using 'a' and 'd', and you can jump with the spacebar. There isn't really any collision detection yet so, not exactly a challenge. :)
