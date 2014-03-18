@@ -15,8 +15,9 @@ Right now you actually have to use grunt to build and run. (although its pretty 
 1. Install node
 2. Clone the repo
 3. Open the project directory
-4. run `grunt devserver` -- this starts a mini-server to run the app
-5. open the browser to localhost:8889
+4. run `grunt` -- this will compile the TypeScript code and output it into the dist directory
+5. run `grunt devserver` -- this starts a mini-server to run the app
+6. open the browser to localhost:8889
 
 If you want to be able to edit the app and see the changes, run `grunt watch`, and the typescript will recompile automatically on save.
 
