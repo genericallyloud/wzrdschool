@@ -1,5 +1,8 @@
 ///<reference path="Vector.ts"/>
 module WZRD {
+    /**
+     * This class is basically just  rectangle with some methods for determining intersection
+     */
     export class Bounds {
         private bottomLeft:Vector;
         private topRight:Vector;
@@ -24,17 +27,59 @@ module WZRD {
         getLeft(){
             return this.bottomLeft.x;
         }
-
-        intersectsWith(other:Bounds){
-
+    
+        /**
+         * The function operates expecting this bounds to be moving right,
+         * and testing to see if it intersects with the left edge of other
+         */
+        intersectsLeft(other:Bounds):number{
+            debugger;
+            if(this.getRight() > other.getLeft() && this.getLeft() < other.getLeft()){
+                return other.getLeft() - this.getRight();
+            }else{
+                return 0;
+            }
+        }
+    
+        /**
+         * True if intersects with the right edge of other
+         */
+        intersectsRight(other:Bounds):number{
+            return other.intersectsLeft(this) * -1;
+        }
+    
+        /**
+         * True if intersects with the top edge of other
+         */
+        intersectsTop(other:Bounds):number{
+            if(this.getBottom() < other.getTop() && this.getTop() > other.getTop()){
+                return other.getTop() - this.getBottom();
+            }else{
+                return 0;
+            }
+        }
+    
+        /**
+         * True if intersects with the bottom edge of other
+         */
+        intersectsBottom(other:Bounds):number{
+            return other.intersectsTop(this) * -1;
         }
 
+        /**
+         * Tests if this bounds is wholely contained within the other bounds on the x axis and if not,
+         * returns the amount out of bounds it is
+         */
         insideXOf(other:Bounds){
             if(this.bottomLeft.x < other.bottomLeft.x) return this.bottomLeft.x - other.bottomLeft.x;
             if(this.topRight.x > other.topRight.x) return this.topRight.x - other.topRight.x;
             return 0;
         }
 
+        /**
+         * Tests if this bounds is wholely contained within the other bounds on the x axis and if not,
+         * returns the amount out of bounds it is
+         */
         insideYOf(other:Bounds){
             if(this.bottomLeft.y < other.bottomLeft.y) return this.bottomLeft.y - other.bottomLeft.y;
             if(this.topRight.y > other.topRight.y) return this.topRight.y - other.topRight.y;
@@ -54,6 +99,10 @@ module WZRD {
         moveXY(moveVector){
             this.bottomLeft = this.bottomLeft.plus(moveVector);
             this.topRight = this.topRight.plus(moveVector);
+        }
+    
+        copy():Bounds{
+            return new Bounds(this.bottomLeft.copy(),this.topRight.copy());
         }
 
         getEdge(edge:Edge):number{

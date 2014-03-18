@@ -23,6 +23,9 @@ module WZRD {
             this.initPosition(startX,startY);
         }
 
+        /**
+         * This is basically the draw function
+         */
         writeToBuffer(buffer:Float32Array, bufferIndex:number):number{
             var bottom = this.bounds.getBottom(),
             top = this.bounds.getTop(),
@@ -51,39 +54,55 @@ module WZRD {
             return bufferIndex;
         }
 
+        /**
+         * Called on every frame. Updates the player location which will be needed to
+         * update the camera etc.
+         */
         update(elapsedTime:number){
             //update the velocity based on the input
             var xVel = this.velocity.x;
+            
+            //based on the movement type, we adjust our speed
             switch(this.moveType){
+                //any left movement accelerates left direction until top speed
                 case MoveType.LEFT:
                 case MoveType.BOTH_LEFT:
-//                    console.log("moving left");
-                    xVel -= 16;
+                    if(xVel > 0) xVel = 0;
+                    xVel -= 25;
                     if(xVel < -600) xVel = -600;
                     break;
+                //any right movement accelerates right until top speed
                 case MoveType.RIGHT:
                 case MoveType.BOTH_RIGHT:
-//                    console.log("moving right");
-                    xVel += 15;
+                    if(xVel < 0) xVel = 0;
+                    xVel += 25;
                     if(xVel > 600) xVel = 600;
                     break;
+                //if not moving, quickly slow down until stop
                 default:
-//                    console.log("moving right");
-                    xVel = 0;
+                    if(xVel < -50){
+                        xVel += 50;
+                    }else if(xVel > 50){
+                        xVel -= 50;
+                    }else{
+                        xVel = 0;
+                    }
                     break;
                     
             }
+            //assume all of our velocities are based on per second rates (px/s)
             var perSec = elapsedTime/1000;
-            var gravity = 1500 * perSec;
+            var gravity = 1500 * perSec; // -1500 px/s^2
             var yVel = this.velocity.y - gravity;
             if(yVel < -600){
                 //terminal velocity
                 yVel = -600;
             }
             this.velocity.y = yVel;
-//            console.log("velocity",this.velocity);
             this.velocity.x = xVel;
+            //take the velocity and multiply times time to get distance
             var moveVector = this.velocity.timesNum(perSec);
+            //adjust our position with the distance
             this.position = this.position.plus(moveVector);
             
             //temp collision detection  
@@ -91,12 +110,18 @@ module WZRD {
                 var diffOver = 160 - this.position.y;
                 //correct the move
                 moveVector.y += diffOver;
+                //correct position
                 this.position.y = 160;
+                //we hit the ground, stop moving
                 this.velocity.y = 0;
             }
+            //now adjust the bounds box with the move vector
             this.bounds.moveXY(moveVector);
         }
 
+        /**
+         * This is called any time there is input that a player should be aware of to adjust itself
+         */
         onInput(inputEvent:InputEventType){
             switch(inputEvent){
                 case InputEventType.MOVE_LEFT_START:
@@ -130,6 +155,7 @@ module WZRD {
                     break;
                 case InputEventType.JUMP_START:
                     if(this.velocity.y == 0){
+                        //a high initial velocity going up
                         this.velocity.y = 800;
                     }
                     break;
@@ -145,5 +171,10 @@ module WZRD {
         }
     }
 
+    /**
+     * The move types are slightly convoluted, but need to handle the case of
+     * pressing both keys and lifting one up again gracefully. This basically creates
+     * a state machine handled in the onInput method
+     */
     enum MoveType{NONE,LEFT,RIGHT,BOTH_LEFT,BOTH_RIGHT}
 }

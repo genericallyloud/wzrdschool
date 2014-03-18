@@ -43,10 +43,17 @@ module.exports = function(grunt) {
                 options: {
                     module: 'amd' //or commonjs
                 }
+            },
+            test: {
+                src: ['test/**/*.ts'],
+                dest: 'test/<%= pkg.name %>-test.js',
+                options: {
+                    module: 'amd' //or commonjs
+                }
             }
         },
         watch: {
-          files: ['src/**/*.ts'],
+          files: ['src/**/*.ts','test/**/*.ts'],
           tasks: ['typescript']
         },
         devserver: {options:{port:8889}, server: {}}
@@ -60,7 +67,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-devserver');
     grunt.loadNpmTasks('grunt-typescript');
 
-    grunt.registerTask('test', ['jshint', 'qunit']);
+    grunt.registerTask('test', ['qunit']);
     grunt.registerTask('default', ['typescript']);
 
 };
