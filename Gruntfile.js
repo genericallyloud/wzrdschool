@@ -41,6 +41,8 @@ module.exports = function(grunt) {
                 src: ['src/**/*.ts'],
                 dest: 'dist/<%= pkg.name %>.js',
                 options: {
+                    target: 'es5', //or es3
+                    sourceMap: true,
                     module: 'amd' //or commonjs
                 }
             },
@@ -48,6 +50,8 @@ module.exports = function(grunt) {
                 src: ['test/**/*.ts'],
                 dest: 'test/<%= pkg.name %>-test.js',
                 options: {
+                    target: 'es5', //or es3
+                    sourceMap: true,
                     module: 'amd' //or commonjs
                 }
             }

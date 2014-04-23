@@ -33,7 +33,6 @@ module WZRD {
          * and testing to see if it intersects with the left edge of other
          */
         intersectsLeft(other:Bounds):number{
-            debugger;
             if(this.getRight() > other.getLeft() && this.getLeft() < other.getLeft()){
                 return other.getLeft() - this.getRight();
             }else{
@@ -116,6 +115,17 @@ module WZRD {
                 return this.getBottom();
             }
         }
+    
+        getOppositeEdge(edge:Edge):number{
+            return this.getEdge(toOppositeEdge(edge));
+        }
+    
+        static fromEdgesBLTR(bottom, left, top, right):Bounds{
+            return new Bounds(new Vector(left,bottom), new Vector(right,top));
+        }
+        static fromEdgesObject(edges:{left:number;bottom:number;right:number;top:number;}):Bounds{
+            return new Bounds(new Vector(edges.left,edges.bottom), new Vector(edges.right,edges.top));
+        }
     }
 
     export enum Edge {
@@ -123,5 +133,18 @@ module WZRD {
         RIGHT,
         TOP,
         BOTTOM
+    }
+
+    export function toOppositeEdge(edge:Edge):Edge{
+        switch(edge){
+            case Edge.LEFT:
+                return Edge.RIGHT;
+            case Edge.RIGHT:
+                return Edge.LEFT;
+            case Edge.TOP:
+                return Edge.BOTTOM;
+            case Edge.BOTTOM:
+                return Edge.TOP;
+        }
     }
 }

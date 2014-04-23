@@ -1,14 +1,16 @@
 ///<reference path="Vector.ts"/>
 ///<reference path="Bounds.ts"/>
+///<reference path="Sprite.ts"/>
+///<reference path="InputManager.ts"/>
 module WZRD {
-    export class Player {
-        private position:Vector;
-        private velocity:Vector;
+    export class Player implements Sprite{
+        public velocity:Vector;
         private tileLocation;
         public bounds:Bounds;
         private width:number;
         private height:number;
         private color:number[];
+        private onGround:boolean;
         
         //kind of edge case, but need to handle the case of pressing both buttons
         private moveType:MoveType;
@@ -19,6 +21,7 @@ module WZRD {
             this.height = 2 * 32;
             this.color = [0,0,0];
             this.moveType = MoveType.NONE;
+            this.onGround = true;
 
             this.initPosition(startX,startY);
         }
@@ -92,31 +95,24 @@ module WZRD {
             }
             //assume all of our velocities are based on per second rates (px/s)
             var perSec = elapsedTime/1000;
-            var gravity = 1500 * perSec; // -1500 px/s^2
+            console.log(perSec);
+            var gravity = 1400 * perSec; // -1500 px/s^2
             var yVel = this.velocity.y - gravity;
-            if(yVel < -600){
+            if(yVel < -500){
                 //terminal velocity
-                yVel = -600;
+                yVel = -500;
             }
             this.velocity.y = yVel;
             this.velocity.x = xVel;
             //take the velocity and multiply times time to get distance
             var moveVector = this.velocity.timesNum(perSec);
-            //adjust our position with the distance
-            this.position = this.position.plus(moveVector);
-            
-            //temp collision detection  
-            if(this.position.y < 160){//160 baseline
-                var diffOver = 160 - this.position.y;
-                //correct the move
-                moveVector.y += diffOver;
-                //correct position
-                this.position.y = 160;
-                //we hit the ground, stop moving
-                this.velocity.y = 0;
-            }
             //now adjust the bounds box with the move vector
             this.bounds.moveXY(moveVector);
+            if(yVel < 0){
+                //I'm falling
+                this.onGround = false;
+                //this will get reset by collision detection if corrected
+            }
         }
 
         /**
@@ -154,16 +150,22 @@ module WZRD {
                     }
                     break;
                 case InputEventType.JUMP_START:
-                    if(this.velocity.y == 0){
+                    if(this.onGround){
+                        this.onGround = false;
                         //a high initial velocity going up
-                        this.velocity.y = 800;
+                        this.velocity.y = 700;
                     }
                     break;
             }
         }
+        
+        collide(edge:Edge){
+            if(edge == Edge.BOTTOM){
+                this.onGround = true;
+            }
+        }
 
         private initPosition(x,y){
-            this.position = new Vector(x,y);
             var bl = new Vector(x-(this.width/2),y-(this.height/2));
             var tr = new Vector(bl.x+this.width,bl.y+this.height);
             this.bounds = new Bounds(bl,tr);

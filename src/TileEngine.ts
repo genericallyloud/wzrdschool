@@ -1,10 +1,15 @@
 ///<reference path="levels/test.ts"/>
+///<reference path="underscore.d.ts"/>
+///<reference path="CollisionTile.ts"/>
 module WZRD {
-    
+    export interface LevelChangeHandler {
+        onLevelChange(colMax:number);
+    }
     export interface LevelData {
         buffer:Float32Array;
         colOffsets:number[];
         bufferIndex:number;
+        tiles:TileDef[][];
     }
     
     export class TileEngine {
@@ -12,17 +17,19 @@ module WZRD {
         private colOffsets:number[];
         private dataLength:number;
         private colMax:number;
-        private camera:Camera;
+        private camera:LevelChangeHandler;
+        private tiles:TileDef[][];
 
         /**
          * Creates a new TileEngine which manages the tile data for rendering
          *
          * @Constructor
          */
-        constructor(camera:Camera){
+        constructor(camera:LevelChangeHandler){
             this.camera = camera;
             var levelData = TileEngine.createLevelData(Levels.test.tileConfig);
             this.tileData = levelData.buffer;
+            this.tiles = levelData.tiles;
             this.colOffsets = levelData.colOffsets;
             this.dataLength = levelData.bufferIndex;
             this.colMax = this.colOffsets.length-31;
@@ -43,11 +50,61 @@ module WZRD {
 
             return {buffer:this.tileData.subarray(startIndex, endIndex), vertexCount:floatCount/5};
         }
+    
+        getCollisionTilesForBounds(bounds:Bounds):CollisionTile[][]{
+            var startCol = TileEngine.pixelToTile(bounds.getLeft()),
+                endCol = TileEngine.pixelToTile(bounds.getRight()),
+                startRow = TileEngine.pixelToTile(bounds.getBottom()),
+                endRow = TileEngine.pixelToTile(bounds.getTop()),
+                cols = [],
+                c:number,
+                r:number,
+                currCol:CollisionTile[],
+                currTileDef:TileDef;
+            for(c=startCol;c<=endCol;c++){
+                currCol = [];
+                for(r=startRow;r<=endRow;r++){
+                    currTileDef = this.tiles[c][r];
+                    currCol.push(new BlockTile(currTileDef,c,r,TileEngine.TILE_SIZE));
+                }
+                cols.push(currCol);
+            }
+            return cols;
+        }
+                                                     
         //=================================================
         //     Static Methods
         // mostly used internally, but testable this way
         //=================================================
+                
+        static tileTypes:TileDef[] = [
+            Object.freeze({
+                name:"air",
+                tileCollisionType:TileCollisionType.NONE
+            }),
+            Object.freeze({
+                name:"dirt",
+                tileCollisionType:TileCollisionType.BLOCK
+            }),
+            Object.freeze({
+                name:"grass",
+                tileCollisionType:TileCollisionType.BLOCK
+            }),
+            Object.freeze({
+                name:"slope up",
+                tileCollisionType:TileCollisionType.SLOPE,
+                slope:(x)=>x
+            }),
+            Object.freeze({
+                name:"slope down",
+                tileCollisionType:TileCollisionType.SLOPE,
+                slope:(x)=>TileEngine.TILE_SIZE-x
+            })
+        ];
 
+        static pixelToTile(px:number){
+            return px/TileEngine.TILE_SIZE | 0;
+        }
         /**
          *
          */
@@ -63,6 +120,8 @@ module WZRD {
             [0.459,0.376,0.09], //brown
             [0.137,0.619,0] //green
         ];
+    
+        static TILE_SIZE = 32;
 
         /**
          * Takes a 2D array like the one created by parseLevel and produces a Float32Array
@@ -77,15 +136,20 @@ module WZRD {
                 //this array is over-allocated for the maximum possible amount. room for optimization
                 buffer = new Float32Array(width * height * 6 * 5),
                 bufferIndex = 0,
-                colOffsets = [];
+                colOffsets = [],
+                tiles = [],
+                tilesRow;
             
             for(colNum=0;colNum<width;colNum++){
                 col = tileConfig[colNum];
                 xCoord = colNum * 32;
                 //maintain a index of where in the buffer each column starts
                 colOffsets[colNum] = bufferIndex;
+                tilesRow = [];
+                tiles[colNum] = tilesRow;
                 for(tileNum=0;tileNum<height;tileNum++){
                     tileVal = col[tileNum];
+                    tilesRow[tileNum] = TileEngine.tileTypes[tileVal];
                     //exit early if no tile here
                     if(tileVal === 0) continue;
 
@@ -99,7 +163,7 @@ module WZRD {
                 }
             }
 
-            return {buffer:buffer,colOffsets:colOffsets,bufferIndex:bufferIndex};
+            return {buffer:buffer,colOffsets:colOffsets,bufferIndex:bufferIndex,tiles:tiles};
         }
 
         static createTileVertices(x,y,width,height,color,buffer,bufferIndex){

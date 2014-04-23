@@ -15,7 +15,8 @@
     "tests"
   ],
   "dependencies": {
-    "pixi.js": "~1.4.3"
+    "pixi.js": "~1.4.3",
+    "underscore": "~1.6.0"
   },
   "devDependencies": {
     "qunit": "~1.14.0"

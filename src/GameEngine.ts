@@ -36,7 +36,7 @@ module WZRD {
                 //initialized and ready for use in subsequent calls. This is basically
                 //a lost from that doesn't update or draw, but shouldn't really be noticeable
                 this.clock.initTime(timestamp);
-                this.nextFrame = window.requestAnimationFrame(this.gameTickCallback);
+                this.nextFrame = this.requestAnimationFrame(this.gameTickCallback);
             };
 
             this.paused = false;
@@ -45,7 +45,7 @@ module WZRD {
 
             this.clock = new Clock();
             this.inputManager = new InputManager(this);
-            this.player = new Player(128,160);
+            this.player = new Player(640,160);
             this.camera = new Camera(this.player);
             this.tileEngine = new TileEngine(this.camera);
             this.stateManager = new StateManager(this.tileEngine,this.player);
@@ -55,7 +55,7 @@ module WZRD {
         }
 
         start(){
-            this.nextFrame = window.requestAnimationFrame(this.firstTick);
+            this.nextFrame = this.requestAnimationFrame(this.firstTick);
             this.paused = false;
         }
 
@@ -71,7 +71,7 @@ module WZRD {
             this.camera.update(elapsedTime);
             this.renderManager.draw();
 
-            this.nextFrame = window.requestAnimationFrame(this.gameTickCallback);
+            this.nextFrame = this.requestAnimationFrame(this.gameTickCallback);
         }
 
         fireInputEvent(inputEvent:InputEventType){
@@ -84,6 +84,15 @@ module WZRD {
             }else{
                 this.player.onInput(inputEvent);
             }
+        }
+    
+        private requestAnimationFrame(callback:GameTickCallback):number{
+            return window.requestAnimationFrame(callback);
+            //dev mode
+//            var nextTime = this.clock.getTime()+60;
+//            return setTimeout(function(){
+//                callback(nextTime);
+//            },500);
         }
     }
 

@@ -12,5 +12,9 @@ module WZRD {
             this.time = timestamp;
             return diff;
         }
+    
+        getTime(){
+            return this.time;
+        }
     }
 }

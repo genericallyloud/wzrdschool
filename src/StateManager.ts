@@ -1,3 +1,6 @@
+///<reference path="Sprite.ts"/>
+///<reference path="Player.ts"/>
+///<reference path="TileEngine.ts"/>
 module WZRD {
     export class StateManager {
         private tileEngine:TileEngine;
@@ -10,6 +13,10 @@ module WZRD {
 
         update(elapsedTime:number){
             this.player.update(elapsedTime);
+        }
+    
+        getActiveSprites():Sprite[]{
+            return [this.player];
         }
     
         getSpriteVertices(){
